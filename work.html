@@ -1,1 +1,108 @@
-123
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Примитивная страница</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        table {
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        td {
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            border: 1px solid black;
+        }
+
+        .yellow {
+            background-color: yellow;
+        }
+        .red {
+            background-color: red !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="text">
+        <p> Создать примитивную HTML станицу. На странице расположите три кнопки. И таблицу 5*5 со случайно
+            расставленными цифрами 0 или 1. При нажатии на вторую кнопку выдать всплывающим сообщением надпись, сколько
+            ячеек с нулями имеют рядом с собой больше двух ячеек с единицей. Рядом считать сверху, снизу слева или
+            справа. При нажатии на любую из кнопок, все ячейки таблицы становятся желтыми. </p>
+        <p>Обратите внимание на оформления кода, комментарии и т.д. Так вы будете работать в команде и нужно что бы
+            другие члены команды смогли читать ваш код. Так же прошу избегать помощи ИИ, так как его код сразу виден. </p>
+    </div>
+
+    <button >Кнопка 1</button>
+    <button class="yellowbutton">Кнопка 2</button>
+    <button >Кнопка 3</button>
+
+    <table class="table"> </table>
+
+    <script>
+        function CreateTable() {
+            const table = $('.table');
+
+            for (i = 0; i < 5; i++) {
+                const row = $('<tr></tr>');//строки
+                for (j = 0; j < 5; j++) {
+                    const cellValue = Math.random() < 0.5 ? 0 : 1;//рандомизатор 0 и 1
+                    const cell = $(`<td>${cellValue}</td>`);// ячейки таблицы
+                    row.append(cell);
+                }
+                table.append(row);
+            }
+        }
+
+        function NeighbourCell() {
+            const rows = $('.table tr');
+            count = 0;
+
+            rows.each(function (rowIndex) {
+                const cells = $(this).find('td');
+
+                cells.each(function (cellIndex) {
+                    const cellValue = parseInt($(this).text(), 10);
+
+                    if (cellValue === 0) {
+                        onesCount = 0;
+
+                        // Проверяем соседей сверху, снизу, слева и справа
+                        if (rowIndex > 0 && $(rows[rowIndex - 1]).find('td').eq(cellIndex).text() === '1') onesCount++;
+                        if (rowIndex < 4 && $(rows[rowIndex + 1]).find('td').eq(cellIndex).text() === '1') onesCount++;
+                        if (cellIndex > 0 && cells.eq(cellIndex - 1).text() === '1') onesCount++;
+                        if (cellIndex < 4 && cells.eq(cellIndex + 1).text() === '1') onesCount++;
+
+                        if (onesCount > 2) {
+                            $(this).addClass('red');// красим 0 имеющие более двух соседей 1
+                            count++;
+                        }
+                        
+                    }
+                });
+            });
+
+            alert(`Количество ячеек с нулями, имеющих больше двух соседей с единицами: ${count}`);
+        }
+
+       
+        $(document).ready(function () {
+            CreateTable(); // Создание таблицы при загрузке страницы
+
+            $('button').on('click', function () { 
+                $('.table td').addClass('yellow'); // красим ячейки в желтый
+            });
+
+            $('.yellowbutton').on('click', function () { 
+                NeighbourCell(); //ищем единичных соседей 
+             });
+        });
+    </script>
+</body>
+
+</html>
